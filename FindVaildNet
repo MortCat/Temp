@@ -1,0 +1,93 @@
+        public static string FindVaildNet(string LocServerName)
+        {
+            //var a = new StringOps();
+            //var b = a.Right(LocServerName,3);
+            var VaildNet ="";
+            var ServerNumberList = new List<string>{"A","B","C","D","E","F","G","H"};
+            var ServerNameNumber = LocServerName.Substring(LocServerName.Length - 3, 1);
+            ServerNumberList.Remove(ServerNameNumber);
+            var SplitServerName = LocServerName.Split(Convert.ToChar(ServerNameNumber));
+            foreach (string x in ServerNumberList)
+            {
+                var ServerName = SplitServerName[0] + x + SplitServerName[1];
+                bool PingResult = PingIpAddress(ServerName);
+                if (PingResult == true)
+                {
+                    AutoLoginToNetworkDrive(Path.Combine(@"\\" + ServerName, "d$"), @"\_Install", "AreaUser", "Deprt.Areaowner");
+                    VaildNet = ServerName;
+                    break;
+                }
+            }
+            return VaildNet;
+        }
+        public static string FindVaildNetByLinq(string LocServerName)
+        {
+            var ServerNumberList = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H" };
+            //var ServerNameNumber = LocServerName[3^..2^];
+            var ServerNameNumber = LocServerName.Substring(LocServerName.Length - 3, 1);
+            var VaildNet = ServerNumberList
+                .Where(x => x != ServerNameNumber)//篩選編號，移除自己的。
+                .Select(x => $"{LocServerName.Substring(0, LocServerName.Length - 3)}{x}{LocServerName.Substring(LocServerName.Length - 2)}")
+                .FirstOrDefault(x => PingIpAddress(x));
+
+            //AutoLoginToNetworkDrive(Path.Combine(@"\\" + VaildNet, "d$"), @"\_Install", "AreaUser", "Deprt.Areaowner");
+            AutoLoginToNetworkDrive($@"\\{VaildNet}\d$", @"\_Install", "AreaUser", "Deprt.Areaowner");
+            return VaildNet;
+        }
+
+
+        private static bool PingIpAddress(string ipAddress)
+        {
+            try
+            {
+                var ping = new Ping();
+                var reply = ping.Send(ipAddress, 1000);
+                return reply.Status == IPStatus.Success;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ping failed. {ex.Message}");
+                return false;
+            }
+        }
+        public static bool _PingIpAddress(string ipAddress)
+        {
+            try
+            {
+                IPAddress[] addresses = Dns.GetHostEntry(ipAddress).AddressList;
+                foreach (IPAddress address in addresses)
+                {
+                    using (Ping pingSender = new Ping())
+                    {
+                        PingReply reply = pingSender.Send(address, 1000);
+                        IPStatus status = reply.Status;
+                        if (status == IPStatus.Success)
+                        {
+                            Console.WriteLine("Ping succeeded.");
+                            return true;
+                        }
+                    }
+                }
+
+                Console.WriteLine("Ping failed.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ping failed. {ex.Message}");
+                return false;
+            }
+        }
+        
+        //by cmd
+        public static void AutoLoginToNetworkDrive(string driveLetter, string networkPath, string username, string password)
+        {
+            string cmd = $"net use {driveLetter}: {networkPath} /user:{username} {password}";
+
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe", $"/c {cmd}");
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.StartInfo = startInfo;
+            process.Start();
+            process.WaitForExit();
+        }
