@@ -122,4 +122,10 @@
                 process.WaitForExit();
         }
         
-        
+        public string IPAddress()
+        {
+                // 獲取本機 IP 地址
+                IPAddress ipAddress = Dns.GetHostAddresses(Dns.GetHostName())
+                        .Where(addr => addr.AddressFamily == AddressFamily.InterNetwork)
+                        .FirstOrDefault();
+        }        
