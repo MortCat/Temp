@@ -96,21 +96,30 @@
         //using System.Xml.Linq;
         //Elements 函式選取某個元素的子元素，再使用 Select 函式將每個子元素轉換為字串。
 
-        public static void Loading XML to List
+        public static void LoadingXMLtoList()
         {
-        // 讀取 XML 檔案
-        var doc = XDocument.Load("your_file.xml");
+          // 讀取 XML 檔案
+           var doc = XDocument.Load("your_file.xml");
         
-        // 選取母節點
-        var motherNode = doc.Element("mother_node");
+           // 選取母節點
+            var motherNode = doc.Element("mother_node");
 
-        // 將每個子節點的值存成集合
-        var values = motherNode.Elements()
-                               .Select(e => e.Value) //or e => int.parse(e.Value)
-                               .ToList();
-        //modtherNode?.Elements()... if modtherNode is null then break;
-        //.ToList() ?? new List<string>(); ToList() return null, build a null list.Avoid value null.
+          // 將每個子節點的值存成集合
+           var values = motherNode.Elements()
+                                   .Select(e => e.Value) //or e => int.parse(e.Value)
+                                   .ToList();
+             //modtherNode?.Elements()... if modtherNode is null then break;
+            //.ToList() ?? new List<string>(); ToList() return null, build a null list.Avoid value null.
         }
         
+        public void ProcessExecution()
+        {
+                string command = @"robocopy D:\A.txt C:\";
+                ProcessStartInfo processInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
+                processInfo.CreateNoWindow = true;
+                processInfo.UseShellExecute = false;
+                Process process = Process.Start(processInfo);
+                process.WaitForExit();
+        }
         
         
