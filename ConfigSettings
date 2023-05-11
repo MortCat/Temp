@@ -11,3 +11,15 @@
 
             File.WriteAllLines(@"D:\A.txt", list);
         }
+        
+        public static void SetLogPath()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("Member.xml");
+
+            XmlNode maryNode = doc.SelectSingleNode("//person[name='Mary']");
+            XmlNode ageNode = maryNode.SelectSingleNode("age");
+            ageNode.InnerText = "40";
+
+            doc.Save("Member.xml");
+        }
