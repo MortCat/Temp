@@ -17,9 +17,14 @@
             XmlDocument doc = new XmlDocument();
             doc.Load("Member.xml");
 
+            //XmlNode johnNode = doc.SelectSingleNode("/root/person[name='John']");
+            //johnNode.SelectSingleNode("name").InnerText = "Mort";
+            
             XmlNode maryNode = doc.SelectSingleNode("//person[name='Mary']");
             XmlNode ageNode = maryNode.SelectSingleNode("age");
             ageNode.InnerText = "40";
 
             doc.Save("Member.xml");
         }
+        
+        
