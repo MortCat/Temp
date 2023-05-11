@@ -1,0 +1,13 @@
+        public static void SetLogBackup()
+        {
+            string[] lines = File.ReadAllLines(@"D:\A.txt");
+            List<string> list = new List<string>(lines);
+
+            int MLAN = list.IndexOf("A");
+            int LocIP = list.IndexOf("B");
+            string temp = list[MLAN];
+            list[MLAN] = list[LocIP];
+            list[LocIP] = temp;
+
+            File.WriteAllLines(@"D:\A.txt", list);
+        }
